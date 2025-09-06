@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>LumiFolio — Glow-Inspired Portfolio</title>
+<meta name="description" content="LumiFolio - a neon glow portfolio template built with HTML, CSS & JS." />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#04060a;
+    --panel:#071023;
+    --muted:#9fb0c6;
+    --text:#eaf6ff;
+    --accent-blue:#00d8ff;
+    --accent-mag:#ff3ecf;
+    --accent:var(--accent-blue);
+    --card:#0b1220;
+    --glass:rgba(255,255,255,0.03);
+    --border:rgba(255,255,255,0.04);
+    --radius:12px;
+    --speed:260ms;
+    --shadow:0 12px 36px rgba(2,8,23,0.6);
+  }
+
+  *{box-sizing:border-box}
+  html,body{height:100%; margin:0; font-family:"Inter",system-ui,Segoe UI,Roboto,Arial,sans-serif; background:linear-gradient(180deg,#020306 0%, #071021 50%); color:var(--text); -webkit-font-smoothing:antialiased}
+  a{color:inherit}
+  button{font-family:inherit}
+
+  /* animated grid / glow background */
+  .bg{
+    position:fixed; inset:0; z-index:-1; pointer-events:none;
+    background:
+      radial-gradient(1000px 500px at 10% 10%, rgba(0,216,255,0.03), transparent 12%),
+      radial-gradient(900px 450px at 90% 80%, rgba(255,62,207,0.03), transparent 12%),
+      linear-gradient(180deg, rgba(255,255,255,0.01), transparent);
+    filter:blur(6px);
+  }
+
+  header{position:sticky; top:0; z-index:40; backdrop-filter: blur(6px); background:linear-gradient(180deg, rgba(5,8,15,0.6), rgba(5,8,15,0.4)); border-bottom:1px solid var(--border)}
+  .wrap{max-width:1100px; margin:0 auto; padding:12px 20px; display:flex; gap:12px; align-items:center}
+  .brand{display:flex; gap:12px; align-items:center}
+  .logo{width:42px; height:42px; border-radius:10px; background:linear-gradient(135deg,var(--accent), rgba(255,255,255,0.06)); box-shadow:0 8px 24px color-mix(in srgb, var(--accent) 30%, transparent); display:grid; place-items:center; font-weight:700; color:#021}
+  nav{margin-left:auto; display:flex; gap:8px; align-items:center; flex-wrap:wrap}
+  .nav-btn{background:transparent; color:var(--muted); border:1px solid transparent; padding:8px 12px; border-radius:10px; cursor:pointer; transition:all var(--speed)}
+  .nav-btn:hover{color:var(--text); transform:translateY(-2px)}
+  .nav-btn.active{ color:var(--text); border:1px solid rgba(255,255,255,0.04); background:linear-gradient(90deg, rgba(255,255,255,0.02), transparent) }
+
+  .accent-switch{display:flex; gap:8px; align-items:center; border-radius:999px; padding:6px; border:1px solid var(--border); background:var(--glass)}
+  .sw-dot{width:12px; height:12px; border-radius:50%}
+  .sw-blue{background:var(--accent-blue)}
+  .sw-mag{background:var(--accent-mag)}
+  .sw-btn{background:transparent; border:none; color:var(--muted); cursor:pointer; font-weight:600}
+
+  main{max-width:1100px; margin:28px auto; padding:0 20px 60px; min-height:60vh}
+  .panel{background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent 60%), var(--card); border-radius:var(--radius); padding:22px; border:1px solid var(--border); box-shadow:var(--shadow)}
+  h1{margin:0 0 6px; font-size:28px}
+  h2{color:var(--accent); margin:0 0 10px}
+  p.lead{color:var(--muted); margin:8px 0 16px}
+
+  /* Hero */
+  .hero{display:grid; gap:16px}
+  .hero-grid{display:grid; grid-template-columns:1fr 320px; gap:16px; align-items:center}
+  .cta-row{display:flex; gap:10px; align-items:center; margin-top:10px}
+  .btn{background:var(--accent); color:#021; padding:10px 14px; border-radius:10px; border:none; cursor:pointer; font-weight:700; transition:transform var(--speed)}
+  .btn:hover{transform:translateY(-3px)}
+  .ghost{background:transparent; border:1px solid var(--border); color:var(--muted); padding:10px 14px; border-radius:10px}
+
+  /* neon title */
+  .neon-title{
+    font-weight:800; font-size:36px; letter-spacing:0.6px;
+    text-shadow:
+      0 0 6px rgba(255,255,255,0.02),
+      0 0 14px color-mix(in srgb, var(--accent) 60%, #fff);
+  }
+
+  /* profile card */
+  .profile{display:flex; flex-direction:column; align-items:center; gap:12px; text-align:center}
+  .avatar{width:120px; height:120px; border-radius:999px; overflow:hidden; border:3px solid rgba(255,255,255,0.04); display:grid; place-items:center; background:linear-gradient(135deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01))}
+  .avatar img{width:100%; height:100%; object-fit:cover}
+
+  /* About grid */
+  .about-grid{display:grid; grid-template-columns:1fr 320px; gap:16px; align-items:start}
+  .skills{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px}
+  .skill{padding:8px 10px; border-radius:999px; background:linear-gradient(90deg, rgba(255,255,255,0.02), transparent); color:var(--muted); font-weight:600; font-size:13px; border:1px solid rgba(255,255,255,0.02)}
+
+  /* Projects */
+  .projects{display:grid; grid-template-columns:repeat(3,1fr); gap:14px}
+  .proj{border-radius:12px; padding:14px; background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent); border:1px solid var(--border); transition:transform var(--speed), box-shadow var(--speed), border var(--speed)}
+  .proj:hover{transform:translateY(-8px); box-shadow:0 18px 40px color-mix(in srgb, var(--accent) 20%, rgba(2,8,23,0.6)); border:1px solid var(--accent)}
+  .proj-title{font-weight:700; margin:0 0 6px}
+  .tags{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px}
+  .tag{font-size:12px; padding:6px 8px; border-radius:999px; color:var(--text); background:linear-gradient(90deg, rgba(255,255,255,0.02), transparent); border:1px solid rgba(255,255,255,0.02)}
+
+  /* Contact */
+  .contacts{display:grid; grid-template-columns:repeat(3,1fr); gap:12px}
+  .c-card{display:flex; gap:12px; align-items:center; padding:12px; border-radius:10px; background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent); border:1px solid var(--border); transition:transform var(--speed)}
+  .c-card:hover{transform:translateY(-6px); border-color:var(--accent)}
+  .c-icon{width:46px; height:46px; border-radius:10px; display:grid; place-items:center; background:linear-gradient(135deg, rgba(255,255,255,0.02), var(--accent)); color:#021; font-weight:800}
+
+  footer{max-width:1100px; margin:28px auto; padding:0 20px; color:var(--muted); display:flex; justify-content:space-between; align-items:center}
+
+  /* responsive */
+  @media (max-width:980px){
+    .hero-grid, .about-grid{grid-template-columns:1fr}
+    .projects{grid-template-columns:repeat(2,1fr)}
+    nav{display:none}
+  }
+  @media (max-width:640px){
+    .projects{grid-template-columns:1fr}
+    .contacts{grid-template-columns:1fr}
+  }
+
+  /* accessible focus */
+  .nav-btn:focus, .btn:focus, .ghost:focus, .sw-btn:focus { outline:3px solid color-mix(in srgb, var(--accent) 18%, transparent); outline-offset:4px; border-radius:8px }
+</style>
+</head>
+<body>
+  <div class="bg" aria-hidden="true"></div>
+
+  <header>
+    <div class="wrap" role="banner">
+      <div class="brand">
+        <div class="logo" aria-hidden="true">LF</div>
+        <div style="line-height:1">
+          <div style="font-weight:700">LumiFolio</div>
+          <div style="font-size:12px; color:var(--muted)">Glow-inspired portfolio</div>
+        </div>
+      </div>
+
+      <nav role="navigation" aria-label="Primary">
+        <button class="nav-btn active" onclick="render('home')">Home</button>
+        <button class="nav-btn" onclick="render('about')">About</button>
+        <button class="nav-btn" onclick="render('projects')">Projects</button>
+        <button class="nav-btn" onclick="render('contact')">Contact</button>
+      </nav>
+
+      <div class="accent-switch" role="toolbar" aria-label="Accent">
+        <div class="sw-dot sw-blue" title="Electric blue"></div>
+        <button class="sw-btn" onclick="setAccent('blue')" id="bBlue" aria-pressed="true">Blue</button>
+        <div class="sw-dot sw-mag" title="Magenta"></div>
+        <button class="sw-btn" onclick="setAccent('mag')" id="bMag" aria-pressed="false">Mag</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main" role="main" class="wrap">
+    <!-- content injected via JS -->
+  </main>
+
+  <footer role="contentinfo">
+    <div>© 2025 LumiFolio • Built with HTML, CSS & JS</div>
+    <div style="color:var(--muted)">Accent preview</div>
+  </footer>
+
+<script>
+  // Render functions
+  function setActive(name){
+    document.querySelectorAll('.nav-btn').forEach(b => {
+      b.classList.toggle('active', b.textContent.toLowerCase() === name);
+    });
+  }
+
+  function render(section){
+    setActive(section);
+    const main = document.getElementById('main');
+    if(section === 'home'){
+      main.innerHTML = `
+        <section class="panel hero" aria-label="Home">
+          <div class="hero-grid">
+            <div>
+              <div class="neon-title">Hi, I'm <strong>mercy</strong></div>
+              <p class="lead">I design and build modern web experiences. LumiFolio is a glow-inspired portfolio that highlights projects and skills with subtle neon accents and smooth motion.</p>
+              <div class="cta-row">
+                <button class="btn" onclick="downloadResume()">Download Resume</button>
+                <button class="ghost" onclick="render('projects')">View Projects</button>
+              </div>
+            </div>
+
+            <aside class="panel profile" aria-label="Profile summary">
+              <div class="avatar" role="img" aria-label="Profile picture">
+                <img src="https://via.placeholder.com/300x300.png?text=Your+Photo" alt="Profile">
+              </div>
+              <div style="font-weight:700">mercy</div>
+              <div style="color:var(--muted); font-size:13px">Frontend Developer • UI / UX</div>
+            </aside>
+          </div>
+        </section>
+      `;
+    }
+    else if(section === 'about'){
+      main.innerHTML = `
+        <section class="panel" aria-label="About">
+          <h2>About Me</h2>
+          <p class="lead">I focus on building accessible, fast, and delightful interfaces. My approach combines careful UX with clean code so designs feel polished and reliable.</p>
+          <div class="about-grid">
+            <div class="panel">
+              <h3 style="margin-top:0">Experience</h3>
+              <p style="color:var(--muted)">Worked on web apps, performance tuning, and component libraries. I enjoy collaborating with designers and product teams.</p>
+              <h3 style="margin-top:14px">Skills</h3>
+              <div class="skills">
+                <div class="skill">HTML5</div>
+                <div class="skill">CSS3</div>
+                <div class="skill">JavaScript</div>
+                <div class="skill">React</div>
+                <div class="skill">Accessibility</div>
+                <div class="skill">Responsive UI</div>
+              </div>
+            </div>
+
+            <div class="panel">
+              <h3 style="margin-top:0">Interests</h3>
+              <p style="color:var(--muted)">Motion design, accessible components, and micro-interactions that add delight without friction.</p>
+              <h3 style="margin-top:12px">Availability</h3>
+              <p style="color:var(--muted)">Open to internships, freelance gigs, and full-time roles.</p>
+            </div>
+          </div>
+        </section>
+      `;
+    }
+    else if(section === 'projects'){
+      main.innerHTML = `
+        <section class="panel" aria-label="Projects">
+          <h2>Projects</h2>
+          <p class="lead">Selected work showing UI, performance, and accessibility efforts.</p>
+          <div class="projects">
+            <article class="proj" tabindex="0">
+              <div class="proj-title">LumiFolio Template</div>
+              <div style="color:var(--muted); font-size:14px">This template — a glow-themed portfolio with responsive layout, accent toggles and accessible controls.</div>
+              <div class="tags"><span class="tag">HTML</span><span class="tag">CSS</span><span class="tag">JS</span></div>
+            </article>
+
+            <article class="proj" tabindex="0">
+              <div class="proj-title">GlowShop UI</div>
+              <div style="color:var(--muted); font-size:14px">E-commerce UI prototype with focus states and keyboard usability.</div>
+              <div class="tags"><span class="tag">UI</span><span class="tag">Accessibility</span></div>
+            </article>
+
+            <article class="proj" tabindex="0">
+              <div class="proj-title">Pulse Dashboard</div>
+              <div style="color:var(--muted); font-size:14px">Dashboard showcasing charts and realtime updates built with performance in mind.</div>
+              <div class="tags"><span class="tag">Charts</span><span class="tag">Performance</span></div>
+            </article>
+          </div>
+        </section>
+      `;
+    }
+    else if(section === 'contact'){
+      main.innerHTML = `
+        <section class="panel" aria-label="Contact">
+          <h2>Contact</h2>
+          <p class="lead">I'd love to hear about your project—reach out and we'll chat.</p>
+          <div class="contacts">
+            <a class="c-card" href="mailto:mercyyoganadhan@gmail.com">
+              <div class="c-icon" aria-hidden="true">✉️</div>
+              <div>
+                <div style="font-weight:700">Email</div>
+                <div style="color:var(--muted)">mercyyoganadhan@gmail.com</div>
+              </div>
+            </a>
+              <div class="c-icon" aria-hidden="true">📞+91 93619 03151</div>
+              <div>
+                <div style="font-weight:700">Phone</div>
+                <div style="color:var(--muted)">+91 9361903151</div>
+              </div>
+            </a>
+            <a class="c-card" href="https://github.com/mercyyoganadhan-jpg" target="_blank" rel="noopener">
+              <div class="c-icon" aria-hidden="true">💻</div>
+              <div>
+                <div style="font-weight:700">GitHub</div>
+                <div style="color:var(--muted)">github.com/mercyyoganadhan-jpg</div>
+              </div>
+            </a>
+          </div>
+        </section>
+      `;
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // Accent toggle (blue/magenta)
+  function setAccent(which){
+    const root = document.documentElement;
+    const blueBtn = document.getElementById('bBlue');
+    const magBtn = document.getElementById('bMag');
+    if(which === 'mag'){
+      root.style.setProperty('--accent', getComputedStyle(root).getPropertyValue('--accent-mag'));
+      blueBtn.setAttribute('aria-pressed','false');
+      magBtn.setAttribute('aria-pressed','true');
+    } else {
+      root.style.setProperty('--accent', getComputedStyle(root).getPropertyValue('--accent-blue'));
+      blueBtn.setAttribute('aria-pressed','true');
+      magBtn.setAttribute('aria-pressed','false');
+    }
+  }
+
+  // Resume download (placeholder)
+  function downloadResume(){
+    const url = 'resume.pdf'; // replace with actual path when available
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'LumiFolio_Resume.pdf';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  }
+
+  // Keyboard shortcuts for accessibility (1-4)
+  document.addEventListener('keydown', e => {
+    if(e.key === '1') render('home');
+    if(e.key === '2') render('about');
+    if(e.key === '3') render('projects');
+    if(e.key === '4') render('contact');
+  });
+
+  // Init
+  render('home');
+</script>
+</body>
+</html>
